@@ -1,13 +1,16 @@
-from rest_framework.generics import RetrieveAPIView
-
 from survey.models import Survey
+from .serializers import SurveySerializer
+from rest_framework.generics import ListAPIView
 
-from .serializers import SurveyDetailSerializer
+class SurveyList(ListAPIView):
+    serializer_class = SurveySerializer
 
-class SurveyDetail(RetrieveAPIView):
-    queryset = Survey.objects.all()
-    serializer_class = SurveyDetailSerializer
-
-# class CommentaryDetail(RetrieveAPIView):
-#     serializer_class = CommentaryDetailSerializer
-#     queryset = Survey.objects.live()
+    def get_queryset(self):
+        """
+        Filter by url query params.
+        """
+        queryset = Survey.objects.live()
+        title = self.request.query_params.get('title', None)
+        if title is not None:
+            queryset = queryset.filter(title=title)
+        return queryset

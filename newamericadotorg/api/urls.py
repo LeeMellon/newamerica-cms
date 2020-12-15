@@ -47,5 +47,5 @@ api_urls = [
     url(r'^content-types/$', meta_views.ContentList.as_view()),
     url(r'^subscribe/$', subscribe_views.subscribe),
     url(r'^jobs/$', jobs_views.JobsList.as_view()),
-    url(r'^survey/$', survey_views.SurveyDetail.as_view()),
+    url(r'^surveys/$', survey_views.SurveyList.as_view()),
 ]
