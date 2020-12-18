@@ -54,6 +54,7 @@ class ProgramSurveysPage(Report):
         ObjectList(content_panels, heading="Landing"),
         ObjectList(surveys_panels, heading="Surveys"),
         ObjectList(Report.sections_panels, heading="Sections"),
+        ObjectList(Report.settings_panels, heading='Settings', classname="settings"),
         ObjectList(Report.promote_panels, heading="Promote"),
     ])
   
