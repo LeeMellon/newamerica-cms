@@ -10,7 +10,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.models import ClusterableModel
 
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel, TabbedInterface, ObjectList
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.models import Page, Orderable
@@ -21,14 +21,44 @@ from wagtail.snippets.models import register_snippet
 
 from programs.models import AbstractContentPage
 from wagtailautocomplete.edit_handlers import AutocompletePanel
-
+from report.models import Report
 from multiselectfield import MultiSelectField
 from .utils import MONTH_CHOICES, DATA_TYPE_CHOICES
-class ProgramSurveysPage(AbstractContentPage):
+
+
+class ProgramSurveysPage(Report):
     parent_page_types = ['programs.Program', 'programs.Subprogram', 'programs.Project']
     subpage_types = ['Survey', 'Commentary', 'SurveyValuesIndex']
+
+    content_panels = [
+       MultiFieldPanel([
+            FieldPanel('title'),
+            FieldPanel('subheading'),
+            FieldPanel('date'),
+            ImageChooserPanel('story_image'),
+        ]),
+        InlinePanel('authors', label=("Authors")),
+        InlinePanel('programs', label=("Programs")),
+        InlinePanel('subprograms', label=("Subprograms")),
+         MultiFieldPanel([
+            FieldPanel('abstract'),
+            ImageChooserPanel('partner_logo'),
+            StreamFieldPanel('featured_sections'),
+            FieldPanel('acknowledgements'),
+        ])
+    ]
+    surveys_panels = [
+      
+    ]
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading="Landing"),
+        ObjectList(surveys_panels, heading="Surveys"),
+        ObjectList(Report.sections_panels, heading="Sections"),
+        ObjectList(Report.promote_panels, heading="Promote"),
+    ])
+  
     class Meta:
-        verbose_name = "Surveys Homepage"
+        verbose_name = "Survey Home Page"
 
     def __str__(self):
         return self.title
@@ -87,6 +117,7 @@ class Survey(Post):
     
     content_panels = [
       MultiFieldPanel([
+        FieldPanel('title'),
         FieldPanel('date'),
       ], heading='Survey Created'),
       MultiFieldPanel([
